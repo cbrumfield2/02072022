@@ -1,3 +1,21 @@
+function evaluateGuess (ans: string) {
+    for (let index = 0; index <= 6; index++) {
+        if (ans == foodNames[index]) {
+            info.changeScoreBy(1)
+        } else {
+            misses += 1 / 7
+        }
+    }
+    if (misses > 2) {
+        game.over(false, effects.melt)
+    } else if (info.score() == 3) {
+        game.over(true, effects.confetti)
+    } else {
+        pause(1000)
+        question()
+        evaluateGuess(playerResponse)
+    }
+}
 function initialize () {
     scene.setBackgroundImage(img`
         3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333
@@ -249,15 +267,17 @@ function initialize () {
         . . . . . . . . . . b b b a a . 
         `
     ]
-    text_list = [
-    "Cheese Burger",
-    "Apple",
-    "Chicken Leg",
-    "Taco",
-    "Cake",
-    "Burger",
-    "Chicken"
+    foodNames = [
+    "cheese burger",
+    "apple",
+    "chicken leg",
+    "taco",
+    "cake",
+    "burger",
+    "chicken"
     ]
+    info.setScore(0)
+    misses = 0
 }
 function question () {
     picinicFood = sprites.create(img`
@@ -278,30 +298,25 @@ function question () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         `, SpriteKind.Player)
-    playerResponse = game.askForString("What was in Yogi's desert?")
-    if (playerResponse == "") {
-    	
-    } else if (false) {
-    	
-    } else {
-    	
-    }
+    playerResponse = game.askForString("What was in Yogi's desert?", 13)
 }
 function start () {
     initialize()
     displayFood(0)
     question()
+    evaluateGuess(playerResponse)
 }
 function displayFood (tms: number) {
     for (let index = 0; index <= tms; index++) {
         for (let index = 0; index <= 4; index++) {
             picinicFood.setImage(Foods[index])
-            pause(500)
+            pause(100)
         }
     }
 }
-let playerResponse = ""
-let text_list: string[] = []
 let Foods: Image[] = []
 let picinicFood: Sprite = null
+let playerResponse = ""
+let misses = 0
+let foodNames: string[] = []
 start()
